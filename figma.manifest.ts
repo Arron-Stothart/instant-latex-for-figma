@@ -1,8 +1,9 @@
-{
+// https://www.figma.com/plugin-docs/manifest/
+export default {
   "name": "Real Time LaTeX",
   "id": "1420200508652132281",
   "api": "1.0.0",
-  "main": "code.js",
+  "main": "plugin.js",
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",
@@ -10,7 +11,7 @@
     "figma",
     "figjam"
   ],
-  "ui": "ui.html",
+  "ui": "index.html",
   "networkAccess": {
     "allowedDomains": [
       "none"
