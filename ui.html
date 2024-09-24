@@ -2,8 +2,12 @@
 <p>Count: <input id="count" type="number" value="5"></p>
 <button id="create">Create</button>
 <button id="cancel">Cancel</button>
-<script>
 
+<h2>LaTeX Renderer</h2>
+<p>LaTeX: <input id="latex" type="text" placeholder="Enter LaTeX"></p>
+<button id="render-latex">Render LaTeX</button>
+
+<script>
 document.getElementById('create').onclick = () => {
   const textbox = document.getElementById('count');
   const count = parseInt(textbox.value, 10);
@@ -14,4 +18,9 @@ document.getElementById('cancel').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
 }
 
+document.getElementById('render-latex').onclick = () => {
+  const latexInput = document.getElementById('latex');
+  const latex = latexInput.value;
+  parent.postMessage({ pluginMessage: { type: 'render-latex', latex } }, '*')
+}
 </script>
