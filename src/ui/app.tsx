@@ -1,3 +1,6 @@
+import "@ui/styles/tailwind.css";
+import "@ui/styles/main.scss";
+
 import { useState } from "react";
 import * as Networker from "monorepo-networker";
 import { NetworkMessages } from "@common/network/messages";
@@ -7,7 +10,7 @@ import viteLogo from "@ui/assets/vite.svg?url";
 import figmaLogo from "@ui/assets/figma.png";
 
 import { Button } from "@ui/components/Button";
-import "@ui/styles/main.scss";
+import { Textarea } from "./components/ui/textarea";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -27,6 +30,8 @@ function App() {
       </div>
 
       <h1>Figma + Vite + React</h1>
+
+      <Textarea placeholder="Type your message here." />
 
       <div className="card">
         <Button onClick={() => setCount((count) => count + 1)}>
