@@ -7,18 +7,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const { mathjax } = require('mathjax-full/js/mathjax.js');
-const { TeX } = require('mathjax-full/js/input/tex.js');
-const { SVG } = require('mathjax-full/js/output/svg.js');
+const mathjax = require('mathjax-full/js/mathjax.js').mathjax;
 const { AllPackages } = require('mathjax-full/js/input/tex/AllPackages.js');
-// Initialize MathJax
 const MathJax = mathjax.init({
     loader: { load: ['input/tex', 'output/svg'] },
-    tex: { packages: AllPackages }
+    tex: { packages: AllPackages },
+    svg: { fontCache: 'none' }
 });
-const svg = new SVG({ fontCache: 'none' });
-const tex = new TeX({ packages: AllPackages });
-const doc = MathJax.document('', { InputJax: tex, OutputJax: svg });
+const doc = MathJax.document('');
 function positionFrameNode(textNode, frameNode, index) {
     const textPosition = textNode.absoluteTransform;
     frameNode.x = textPosition[0][2] + textNode.width * (index / textNode.characters.length);
