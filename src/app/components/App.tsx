@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import { Menu } from 'lucide-react';
 import SettingsMenuContent from './SettingsMenuContent';
+import IntroductionCard from './IntroductionCard';
 
 function App() {
   React.useEffect(() => {
@@ -40,7 +41,10 @@ function App() {
 
       </div>
 
+      <IntroductionCard />
+
       <Textarea placeholder="Type your message here." />
+
     </div>
   );
 }
