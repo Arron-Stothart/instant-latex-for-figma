@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 
-import { Textarea } from '@/components/ui/textarea';
+import { LaTeXArea } from '@/components/ui/latexarea';
 
 interface LatexTextAreaProps {
   value: string | null;
@@ -15,5 +15,5 @@ export default function LatexTextArea({
     onChange(event.target.value);
   };
 
-  return <Textarea value={value} onChange={handleChange} placeholder="Type your message here." />
+  return <LaTeXArea value={value} onChange={handleChange} placeholder="Type your message here." />
 }

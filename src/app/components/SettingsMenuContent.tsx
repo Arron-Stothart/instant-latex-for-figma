@@ -51,7 +51,7 @@ const SettingsMenuContent: React.FC = () => {
         <div className="grid grid-cols-3 items-center gap-4">
           <Label htmlFor="equation-size">Equation Size</Label>
           <div className="col-span-2 flex items-center gap-2">
-            <Button variant="secondary" size="sm">Dynamic</Button>
+            <Button variant="secondary" size="sm">Default</Button>
             <p className="text-sm text-muted-foreground">or</p>
             <div className="flex items-center gap-2 flex-grow max-w-[150px]">
               <p className="text-sm text-muted-foreground whitespace-nowrap">24px</p>

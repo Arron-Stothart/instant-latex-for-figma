@@ -53,7 +53,7 @@ function App() {
   return (
     <div className="p-4 space-y-4">
       <div className="flex flex-row space-x-2 items-center justify-between">
-        <p className="text-lg font-medium">Real-time LaTeX</p>
+        <p className="text-lg font-medium">Instant LaTeX</p>
 
         <div className="flex flex-row space-x-2 items-center justify-end">
           <Button variant="default" size="icon" asChild>
