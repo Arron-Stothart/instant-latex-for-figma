@@ -1,6 +1,6 @@
 {
   "name": "Real-time LaTeX",
-  "id": "00000000",
+  "id": "1420200508652132281",
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "dist/ui.html",

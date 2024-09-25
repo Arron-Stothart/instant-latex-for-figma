@@ -1,5 +1,8 @@
 figma.showUI(__html__);
 
+figma.ui.resize(600, 450);
+
+
 figma.ui.onmessage = (msg) => {
   if (msg.type === 'create-rectangles') {
     const nodes = [];
