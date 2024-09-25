@@ -10,21 +10,25 @@ import LatexTextArea from './LatexTextArea';
 import { renderLatex, validateLatex } from '@/lib/latexRendering';
 
 function App() {
+  const [latexInput, setLatexInput] = React.useState<string | null>(null);
+  const [latexError, setLatexError] = React.useState<string | null>(null);
+  
   React.useEffect(() => {
     window.onmessage = (event) => {
-      const { type, message } = event.data.pluginMessage;
+      const { type, message, latex } = event.data.pluginMessage;
       if (type === 'render-latex-complete') {
         console.log(`Figma Says: ${message}`);
         setLatexError(null);
       } else if (type === 'render-latex-error') {
         console.error(`Figma Error: ${message}`);
         setLatexError(message);
+      } else if (type === 'latex-frame-selected') {
+        setLatexInput(latex);
+      } else if (type === 'latex-frame-deselected') {
+        setLatexInput('');
       }
     };
   }, []);
-
-  const [latexInput, setLatexInput] = React.useState<string | null>(null);
-  const [latexError, setLatexError] = React.useState<string | null>(null);
 
   const handleLatexChange = async (newLatex: string) => {
     setLatexInput(newLatex);
@@ -33,10 +37,10 @@ function App() {
     if (validationError) {
       setLatexError(validationError);
     } else {
-      setLatexError(null); // Clear previous errors
+      setLatexError(null);
       renderLatex(newLatex)
         .then((svgString) => {
-          parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString } }, '*');
+          parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString, latex: newLatex } }, '*');
         })
         .catch((renderError) => {
           console.error('Error rendering LaTeX:', renderError);

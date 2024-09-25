@@ -2,28 +2,34 @@ figma.showUI(__html__);
 
 figma.ui.resize(600, 450);
 
-let latexFrame: FrameNode | null = null;
-
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'render-latex-request') {
     try {
       const svgNode = figma.createNodeFromSvg(msg.svg);
       
-      if (!latexFrame) {
+      let latexFrame: FrameNode;
+      const selection = figma.currentPage.selection;
+      
+      if (selection.length === 1 && selection[0].type === 'FRAME' && selection[0].name === 'LaTeX Equation') {
+        latexFrame = selection[0] as FrameNode;
+        latexFrame.children.forEach(child => child.remove());
+      } else {
         latexFrame = figma.createFrame();
         latexFrame.name = 'LaTeX Equation';
-        // Set initial position
         latexFrame.x = figma.viewport.center.x;
         latexFrame.y = figma.viewport.center.y;
         figma.currentPage.appendChild(latexFrame);
-      } else {
-        const { x, y } = latexFrame;
-        latexFrame.children.forEach(child => child.remove());
-        latexFrame.x = x;
-        latexFrame.y = y;
       }
       
       latexFrame.appendChild(svgNode);
+      
+      const textNode = figma.createText();
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+      textNode.fontName = { family: "Inter", style: "Regular" };
+      textNode.characters = msg.latex;
+      textNode.visible = false;
+      textNode.name = 'Original LaTeX';
+      latexFrame.appendChild(textNode);
       
       latexFrame.resize(svgNode.width, svgNode.height);
       
@@ -43,3 +49,21 @@ figma.ui.onmessage = async (msg) => {
     }
   }
 };
+
+figma.on('selectionchange', () => {
+  const selection = figma.currentPage.selection;
+  if (selection.length === 1 && selection[0].type === 'FRAME' && selection[0].name === 'LaTeX Equation') {
+    const latexFrame = selection[0] as FrameNode;
+    const textNode = latexFrame.findChild(node => node.type === 'TEXT' && node.name === 'Original LaTeX') as TextNode;
+    if (textNode) {
+      figma.ui.postMessage({
+        type: 'latex-frame-selected',
+        latex: textNode.characters
+      });
+    }
+  } else {
+    figma.ui.postMessage({
+      type: 'latex-frame-deselected'
+    });
+  }
+});
