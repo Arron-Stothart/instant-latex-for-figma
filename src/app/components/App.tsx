@@ -1,22 +1,49 @@
 import React from 'react';
 
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 import { Menu } from 'lucide-react';
 import SettingsMenuContent from './SettingsMenuContent';
 import IntroductionCard from './IntroductionCard';
+import LatexTextArea from './LatexTextArea';
+import { renderLatex, validateLatex } from '@/lib/latexRendering';
 
 function App() {
   React.useEffect(() => {
     window.onmessage = (event) => {
       const { type, message } = event.data.pluginMessage;
-      if (type === 'create-rectangles') {
+      if (type === 'render-latex-complete') {
         console.log(`Figma Says: ${message}`);
+        setLatexError(null);
+      } else if (type === 'render-latex-error') {
+        console.error(`Figma Error: ${message}`);
+        setLatexError(message);
       }
     };
   }, []);
+
+  const [latexInput, setLatexInput] = React.useState<string | null>(null);
+  const [latexError, setLatexError] = React.useState<string | null>(null);
+
+  const handleLatexChange = async (newLatex: string) => {
+    setLatexInput(newLatex);
+    const validationError = await validateLatex(newLatex);
+    
+    if (validationError) {
+      setLatexError(validationError);
+    } else {
+      setLatexError(null); // Clear previous errors
+      renderLatex(newLatex)
+        .then((svgString) => {
+          parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString } }, '*');
+        })
+        .catch((renderError) => {
+          console.error('Error rendering LaTeX:', renderError);
+          setLatexError(renderError instanceof Error ? renderError.message : 'Unknown error rendering LaTeX');
+        });
+    }
+  };
 
   return (
     <div className="p-4 space-y-4">
@@ -38,13 +65,13 @@ function App() {
             </PopoverContent>
           </Popover>
         </div>
-
       </div>
 
       <IntroductionCard />
 
-      <Textarea placeholder="Type your message here." />
-
+      <LatexTextArea value={latexInput} onChange={handleLatexChange} />
+      {latexError && <p className="text-red-500">{latexError}</p>}
+      
     </div>
   );
 }
