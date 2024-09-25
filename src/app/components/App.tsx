@@ -8,11 +8,12 @@ import SettingsMenuContent from './SettingsMenuContent';
 import IntroductionCard from './IntroductionCard';
 import LatexTextArea from './LatexTextArea';
 import { renderLatex, validateLatex } from '@/lib/latexRendering';
+import { GitHubLogoIcon } from '@radix-ui/react-icons';
 
 function App() {
   const [latexInput, setLatexInput] = React.useState<string | null>(null);
   const [latexError, setLatexError] = React.useState<string | null>(null);
-  
+
   React.useEffect(() => {
     window.onmessage = (event) => {
       const { type, message, latex } = event.data.pluginMessage;
@@ -55,8 +56,10 @@ function App() {
         <p className="text-lg font-medium">Real-time LaTeX</p>
 
         <div className="flex flex-row space-x-2 items-center justify-end">
-          <Button variant="default">
-            <p className="text-sm">View docs</p>
+          <Button variant="default" size="icon" asChild>
+            <a href="https://github.com/Arron-Stothart/real-time-latex" target="_blank" rel="noopener noreferrer">
+              <GitHubLogoIcon className="h-4 w-4" />
+            </a>
           </Button>
           <Popover>
             <PopoverTrigger asChild>
