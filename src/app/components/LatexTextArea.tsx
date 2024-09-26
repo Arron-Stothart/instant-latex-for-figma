@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useEffect } from 'react';
+import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 
 interface LatexTextAreaProps {
@@ -12,10 +12,10 @@ export default function LatexTextArea({
   onChange,
   error,
 }: LatexTextAreaProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const highlightRef = useRef<HTMLDivElement>(null);
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const highlightRef = React.useRef<HTMLDivElement>(null);
 
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(event.target.value);
   };
 
@@ -27,7 +27,7 @@ export default function LatexTextArea({
     </>
   ) : null;
 
-  useEffect(() => {
+  React.useEffect(() => {
     const adjustHeight = () => {
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';

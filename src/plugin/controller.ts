@@ -1,6 +1,15 @@
+import { loadSettings, saveSetting, Settings } from '../lib/figmaStorage';
+
 figma.showUI(__html__);
 
 figma.ui.resize(600, 450);
+
+let settings: Settings;
+
+loadSettings().then(loadedSettings => {
+  settings = loadedSettings;
+  figma.ui.postMessage({ type: 'settings-updated', settings });
+});
 
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'render-latex-request') {
@@ -80,6 +89,10 @@ figma.ui.onmessage = async (msg) => {
         message: error instanceof Error ? error.message : 'Unknown error rendering LaTeX',
       });
     }
+  } else if (msg.type === 'update-settings') {
+    await saveSetting(msg.key, msg.value);
+    settings = await loadSettings();
+    figma.ui.postMessage({ type: 'settings-updated', settings });
   }
 };
 

@@ -8,7 +8,8 @@ import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import avatarImage from '@/assets/Avatar.png';
+import avatarImage from '@/assets/Gradient-2.png';
+import { Settings, loadSettings } from '@/lib/figmaStorage';
 
 function App() {
   const [latexInput, setLatexInput] = React.useState<string | null>(null);
@@ -17,6 +18,7 @@ function App() {
     errorStart: number;
     errorEnd: number;
   } | null>(null);
+  const [settings, setSettings] = React.useState<Settings | null>(null);
 
   React.useEffect(() => {
     window.onmessage = (event) => {
@@ -37,6 +39,20 @@ function App() {
         setLatexInput('');
         setLatexError(null);
       }
+    };
+
+    loadSettings().then(setSettings);
+
+    const handleSettingsUpdate = (event: MessageEvent) => {
+      if (event.data.pluginMessage && event.data.pluginMessage.type === 'settings-updated') {
+        setSettings(event.data.pluginMessage.settings);
+      }
+    };
+
+    window.addEventListener('message', handleSettingsUpdate);
+
+    return () => {
+      window.removeEventListener('message', handleSettingsUpdate);
     };
   }, [latexInput]);
 
@@ -66,7 +82,7 @@ function App() {
     <div className="p-4 space-y-4">
       <div className="flex flex-row space-x-2 items-center justify-between">
         <div className="flex flex-row space-x-2 items-center">
-          <Avatar className="w-6 h-6">
+          <Avatar className="w-6 h-6 rounded-none">
             <AvatarImage src={avatarImage} alt="Avatar" />
           </Avatar>
           <p className="text-lg font-medium">Instant LaTeX</p>
@@ -85,7 +101,7 @@ function App() {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-100">
-              <SettingsMenu />
+              <SettingsMenu settings={settings} setSettings={setSettings} />
             </PopoverContent>
           </Popover>
         </div>
