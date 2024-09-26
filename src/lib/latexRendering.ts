@@ -94,7 +94,7 @@ export const validateLatex = async (latex: string): Promise<string | null> => {
 export const validateLatexWithKaTeX = (latex: string): string | null => {
   try {
     katex.renderToString(latex, { throwOnError: true });
-    return null; // No error
+    return null;
   } catch (error) {
     return (error as Error).message;
   }
