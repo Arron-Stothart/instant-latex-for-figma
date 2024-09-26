@@ -19,9 +19,13 @@ const SettingsMenuContent: React.FC = () => {
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="arial">Arial</SelectItem>
-              <SelectItem value="helvetica">Helvetica</SelectItem>
-              <SelectItem value="times-new-roman">Times New Roman</SelectItem>
+              <SelectItem value="TeX">MathJax TeX (default)</SelectItem>
+              <SelectItem value="STIX-Web">STIX General</SelectItem>
+              <SelectItem value="Asana-Math">Asana Math</SelectItem>
+              <SelectItem value="Neo-Euler">Neo Euler</SelectItem>
+              <SelectItem value="Gyre-Pagella">Gyre Pagella</SelectItem>
+              <SelectItem value="Gyre-Termes">Gyre Termes</SelectItem>
+              <SelectItem value="Latin-Modern">Latin Modern</SelectItem>
             </SelectContent>
           </Select>
         </div>
