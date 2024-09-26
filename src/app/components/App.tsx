@@ -13,7 +13,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 function App() {
   const [latexInput, setLatexInput] = React.useState<string | null>(null);
-  const [latexError, setLatexError] = React.useState<string | null>(null);
+  const [latexError, setLatexError] = React.useState<{
+    message: string;
+    errorStart: number;
+    errorEnd: number;
+  } | null>(null);
 
   React.useEffect(() => {
     window.onmessage = (event) => {
@@ -23,22 +27,25 @@ function App() {
         setLatexError(null);
       } else if (type === 'render-latex-error') {
         console.error(`Figma Error: ${message}`);
-        setLatexError(message);
+        setLatexError({
+          message: message,
+          errorStart: 0,
+          errorEnd: latexInput?.length || 0
+        });
       } else if (type === 'latex-frame-selected') {
         setLatexInput(latex);
       } else if (type === 'latex-frame-deselected') {
         setLatexInput('');
       }
     };
-  }, []);
+  }, [latexInput]);
 
   const handleLatexChange = async (newLatex: string) => {
     setLatexInput(newLatex);
     const validationError = validateLatexWithKaTeX(newLatex);
     
     if (validationError) {
-      const cleanedError = validationError.replace(/^KaTeX parse error: /, '');
-      setLatexError(cleanedError);
+      setLatexError(validationError);
     } else {
       setLatexError(null);
       try {
@@ -46,7 +53,11 @@ function App() {
         parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString, latex: newLatex } }, '*');
       } catch (renderError) {
         console.error('Error rendering LaTeX:', renderError);
-        setLatexError(renderError instanceof Error ? renderError.message : 'Unknown error rendering LaTeX');
+        setLatexError({
+          message: renderError instanceof Error ? renderError.message : 'Unknown error rendering LaTeX',
+          errorStart: 0,
+          errorEnd: newLatex.length,
+        });
       }
     }
   };
@@ -83,8 +94,11 @@ function App() {
 
       <IntroductionCard />
 
-      <LatexTextArea value={latexInput} onChange={handleLatexChange} />
-      {latexError && <div>{latexError}</div>}
+      <LatexTextArea
+        value={latexInput}
+        onChange={handleLatexChange}
+        error={latexError}
+      />
       
     </div>
   );

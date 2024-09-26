@@ -35,3 +35,16 @@ button:focus {
 input:focus {
   box-shadow: inset 0 0 0 2px #18a0fb;
 }
+.relative {
+  position: relative;
+}
+.error-highlight::before {
+  content: '';
+  position: absolute;
+  top: var(--highlight-top);
+  left: var(--highlight-left);
+  width: 0.6em;
+  height: 1.2em;
+  background-color: rgba(255, 0, 0, 0.3);
+  pointer-events: none;
+}

@@ -91,11 +91,32 @@ export const validateLatex = async (latex: string): Promise<string | null> => {
   });
 };
 
-export const validateLatexWithKaTeX = (latex: string): string | null => {
+export const validateLatexWithKaTeX = (latex: string): { message: string; errorStart: number; errorEnd: number } | null => {
   try {
     katex.renderToString(latex, { throwOnError: true });
     return null;
   } catch (error) {
-    return (error as Error).message;
+    if (error instanceof katex.ParseError) {
+      const fullMessage = error.message;
+      const trimmedMessage = fullMessage.replace(/^KaTeX parse error: /, '');
+      const match = fullMessage.match(/at position (\d+):/);
+      if (match) {
+        const errorStart = parseInt(match[1], 10);
+        let errorEnd = errorStart;
+        while (errorEnd < latex.length && !/\s/.test(latex[errorEnd])) {
+          errorEnd++;
+        }
+        return {
+          message: trimmedMessage,
+          errorStart,
+          errorEnd,
+        };
+      }
+    }
+    return {
+      message: (error as Error).message,
+      errorStart: 0,
+      errorEnd: latex.length,
+    };
   }
 };
