@@ -8,7 +8,7 @@ import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import avatarImage from '@/assets/Gradient-2.png';
+import avatarImage from '@/assets/avatar.svg';
 import { Settings, loadSettings } from '@/lib/figmaStorage';
 
 function App() {
@@ -82,7 +82,7 @@ function App() {
     <div className="p-4 space-y-4">
       <div className="flex flex-row space-x-2 items-center justify-between">
         <div className="flex flex-row space-x-2 items-center">
-          <Avatar className="w-6 h-6 rounded-none">
+          <Avatar className="w-4 h-4 rounded-none">
             <AvatarImage src={avatarImage} alt="Avatar" />
           </Avatar>
           <p className="text-lg font-medium">Instant LaTeX</p>
