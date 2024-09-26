@@ -1,5 +1,5 @@
-import React, { ChangeEvent, useRef } from 'react';
-import { LaTeXArea } from '@/components/ui/latexarea';
+import React, { ChangeEvent, useRef, useEffect } from 'react';
+import { Textarea } from '@/components/ui/textarea';
 
 interface LatexTextAreaProps {
   value: string | null;
@@ -27,12 +27,26 @@ export default function LatexTextArea({
     </>
   ) : null;
 
+  useEffect(() => {
+    const adjustHeight = () => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      }
+      if (highlightRef.current) {
+        highlightRef.current.style.height = textareaRef.current?.style.height || 'auto';
+      }
+    };
+
+    adjustHeight();
+  }, [value]);
+
   return (
     <div className="relative">
       {error && (
         <div
           ref={highlightRef}
-          className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none whitespace-pre-wrap break-words overflow-hidden box-border"
+          className="absolute top-0 left-0 right-0 pointer-events-none whitespace-pre-wrap break-words overflow-hidden box-border"
           style={{
             padding: '0.5rem',
             fontFamily: 'monospace',
@@ -44,12 +58,12 @@ export default function LatexTextArea({
           {highlightedText}
         </div>
       )}
-      <LaTeXArea
+      <Textarea
         ref={textareaRef}
         value={value}
         onChange={handleChange}
         placeholder="Type your LaTeX here."
-        className="bg-transparent relative z-10"
+        className="bg-transparent relative overflow-hidden"
         style={{
           fontFamily: 'monospace',
           fontSize: '1rem',
@@ -58,6 +72,8 @@ export default function LatexTextArea({
           border: '1px solid #ccc',
           padding: '0.5rem',
           width: '100%',
+          resize: 'none',
+          overflow: 'hidden',
         }}
       />
       {error && (

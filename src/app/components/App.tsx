@@ -1,15 +1,14 @@
 import React from 'react';
-
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-
 import { Menu } from 'lucide-react';
 import SettingsMenu from './SettingsMenu';
 import IntroductionCard from './IntroductionCard';
 import LatexTextArea from './LatexTextArea';
 import { renderLatex, validateLatexWithKaTeX } from '@/lib/latexRendering';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import avatarImage from '@/assets/Avatar.png';
 
 function App() {
   const [latexInput, setLatexInput] = React.useState<string | null>(null);
@@ -68,8 +67,7 @@ function App() {
       <div className="flex flex-row space-x-2 items-center justify-between">
         <div className="flex flex-row space-x-2 items-center">
           <Avatar className="w-6 h-6">
-            <AvatarImage src="https://github.com/Arron-Stothart.png" />
-            <AvatarFallback>AS</AvatarFallback>
+            <AvatarImage src={avatarImage} alt="Avatar" />
           </Avatar>
           <p className="text-lg font-medium">Instant LaTeX</p>
         </div>
