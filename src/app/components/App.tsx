@@ -7,8 +7,9 @@ import { Menu } from 'lucide-react';
 import SettingsMenuContent from './SettingsMenuContent';
 import IntroductionCard from './IntroductionCard';
 import LatexTextArea from './LatexTextArea';
-import { renderLatex, validateLatex } from '@/lib/latexRendering';
+import { renderLatex, validateLatexWithKaTeX } from '@/lib/latexRendering';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 function App() {
   const [latexInput, setLatexInput] = React.useState<string | null>(null);
@@ -33,27 +34,33 @@ function App() {
 
   const handleLatexChange = async (newLatex: string) => {
     setLatexInput(newLatex);
-    const validationError = await validateLatex(newLatex);
+    const validationError = validateLatexWithKaTeX(newLatex);
     
     if (validationError) {
-      setLatexError(validationError);
+      const cleanedError = validationError.replace(/^KaTeX parse error: /, '');
+      setLatexError(cleanedError);
     } else {
       setLatexError(null);
-      renderLatex(newLatex)
-        .then((svgString) => {
-          parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString, latex: newLatex } }, '*');
-        })
-        .catch((renderError) => {
-          console.error('Error rendering LaTeX:', renderError);
-          setLatexError(renderError instanceof Error ? renderError.message : 'Unknown error rendering LaTeX');
-        });
+      try {
+        const svgString = await renderLatex(newLatex);
+        parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString, latex: newLatex } }, '*');
+      } catch (renderError) {
+        console.error('Error rendering LaTeX:', renderError);
+        setLatexError(renderError instanceof Error ? renderError.message : 'Unknown error rendering LaTeX');
+      }
     }
   };
 
   return (
     <div className="p-4 space-y-4">
       <div className="flex flex-row space-x-2 items-center justify-between">
-        <p className="text-lg font-medium">Instant LaTeX</p>
+        <div className="flex flex-row space-x-2 items-center">
+          <Avatar className="w-6 h-6">
+            <AvatarImage src="https://github.com/Arron-Stothart.png" />
+            <AvatarFallback>AS</AvatarFallback>
+          </Avatar>
+          <p className="text-lg font-medium">Instant LaTeX</p>
+        </div>
 
         <div className="flex flex-row space-x-2 items-center justify-end">
           <Button variant="default" size="icon" asChild>
@@ -77,7 +84,7 @@ function App() {
       <IntroductionCard />
 
       <LatexTextArea value={latexInput} onChange={handleLatexChange} />
-      {latexError && <p className="text-red-500">{latexError}</p>}
+      {latexError && <div>{latexError}</div>}
       
     </div>
   );

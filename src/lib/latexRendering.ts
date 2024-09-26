@@ -1,3 +1,5 @@
+import katex from 'katex';
+
 declare global {
   interface Window {
     MathJax: any;
@@ -87,4 +89,13 @@ export const validateLatex = async (latex: string): Promise<string | null> => {
       resolve((error as Error).message);
     }
   });
+};
+
+export const validateLatexWithKaTeX = (latex: string): string | null => {
+  try {
+    katex.renderToString(latex, { throwOnError: true });
+    return null; // No error
+  } catch (error) {
+    return (error as Error).message;
+  }
 };
