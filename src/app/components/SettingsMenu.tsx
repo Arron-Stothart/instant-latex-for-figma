@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 
-const SettingsMenuContent: React.FC = () => {
+const SettingsMenu: React.FC = () => {
   return (
     <div className="grid gap-4">
       <h4 className="font-medium leading-none">Settings</h4>
@@ -75,4 +75,4 @@ const SettingsMenuContent: React.FC = () => {
   );
 };
 
-export default SettingsMenuContent;
+export default SettingsMenu;

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 import { Menu } from 'lucide-react';
-import SettingsMenuContent from './SettingsMenuContent';
+import SettingsMenu from './SettingsMenu';
 import IntroductionCard from './IntroductionCard';
 import LatexTextArea from './LatexTextArea';
 import { renderLatex, validateLatexWithKaTeX } from '@/lib/latexRendering';
@@ -75,7 +75,7 @@ function App() {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-100">
-              <SettingsMenuContent />
+              <SettingsMenu />
             </PopoverContent>
           </Popover>
         </div>
