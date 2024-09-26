@@ -5,16 +5,31 @@ figma.ui.resize(600, 450);
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'render-latex-request') {
     try {
+      let latexFrame: FrameNode | null = null;
+      const selection = figma.currentPage.selection;
+      
+      if (selection.length === 1 && selection[0].type === 'FRAME' && selection[0].name === 'LaTeX Equation') {
+        latexFrame = selection[0] as FrameNode;
+      }
+
+      if (!msg.latex.trim()) {
+        if (latexFrame) {
+          latexFrame.remove();
+        }
+        figma.currentPage.selection = [];
+        figma.ui.postMessage({
+          type: 'render-latex-complete',
+          message: 'LaTeX equation removed successfully'
+        });
+        return;
+      }
+
       const svgNode = figma.createNodeFromSvg(msg.svg);
       
       const zoom = figma.viewport.zoom;
       let scaleFactor = 1 / zoom * 5;
       
-      let latexFrame: FrameNode;
-      const selection = figma.currentPage.selection;
-      
-      if (selection.length === 1 && selection[0].type === 'FRAME' && selection[0].name === 'LaTeX Equation') {
-        latexFrame = selection[0] as FrameNode;
+      if (latexFrame) {
         const existingScaleFactor = latexFrame.getPluginData('scaleFactor');
         if (existingScaleFactor) {
           scaleFactor = parseFloat(existingScaleFactor);
