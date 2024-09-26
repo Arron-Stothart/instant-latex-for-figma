@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useEffect } from 'react';
+import React, { ChangeEvent, useRef } from 'react';
 import { LaTeXArea } from '@/components/ui/latexarea';
 
 interface LatexTextAreaProps {
@@ -19,24 +19,10 @@ export default function LatexTextArea({
     onChange(event.target.value);
   };
 
-  useEffect(() => {
-    if (textareaRef.current && highlightRef.current) {
-      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
-      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
-    }
-  });
-
-  const handleScroll = () => {
-    if (textareaRef.current && highlightRef.current) {
-      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
-      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
-    }
-  };
-
   const highlightedText = value && error ? (
     <>
       {value.slice(0, error.errorStart)}
-      <span className="bg-red-200 transition-colors duration-300 ease-in-out">{value.slice(error.errorStart, error.errorEnd)}</span>
+      <span className="bg-red-200">{value.slice(error.errorStart, error.errorEnd)}</span>
       {value.slice(error.errorEnd)}
     </>
   ) : null;
@@ -62,7 +48,6 @@ export default function LatexTextArea({
         ref={textareaRef}
         value={value}
         onChange={handleChange}
-        onScroll={handleScroll}
         placeholder="Type your LaTeX here."
         className="bg-transparent relative z-10"
         style={{
