@@ -36,6 +36,7 @@ function App() {
         setLatexInput(latex);
       } else if (type === 'latex-frame-deselected') {
         setLatexInput('');
+        setLatexError(null);
       }
     };
   }, [latexInput]);
