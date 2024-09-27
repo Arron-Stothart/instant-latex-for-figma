@@ -2,7 +2,7 @@ import { loadSettings, saveSetting, Settings } from '../lib/figmaStorage';
 
 figma.showUI(__html__);
 
-figma.ui.resize(600, 450);
+figma.ui.resize(600, 350);
 
 let settings: Settings;
 

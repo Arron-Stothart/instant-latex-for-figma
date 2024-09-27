@@ -22,7 +22,7 @@ export default function LatexTextArea({
   const highlightedText = value && error ? (
     <>
       {value.slice(0, error.errorStart)}
-      <span className="bg-red-200">{value.slice(error.errorStart, error.errorEnd)}</span>
+      <span className="bg-red-200 rounded-sm">{value.slice(error.errorStart, error.errorEnd)}</span>
       {value.slice(error.errorEnd)}
     </>
   ) : null;
@@ -64,6 +64,7 @@ export default function LatexTextArea({
         onChange={handleChange}
         placeholder="Type your LaTeX here."
         className="bg-transparent relative overflow-hidden"
+        spellCheck={false}
         style={{
           fontFamily: 'monospace',
           fontSize: '1rem',

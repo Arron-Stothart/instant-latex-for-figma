@@ -82,7 +82,16 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ settings, setSettings }) =>
         <div className="grid grid-cols-3 items-center gap-4">
           <Label htmlFor="equation-size">Equation Size</Label>
           <div className="col-span-2 flex items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={() => handleSettingChange('equationSize', 0)}>Default</Button>
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              onClick={() => handleSettingChange('equationSize', 0)}
+              className={cn(
+                settings.equationSize === 0 && "ring-2 ring-slate-900 ring-offset-2"
+              )}
+            >
+              Default
+            </Button>
             <p className="text-sm text-muted-foreground">or</p>
             <div className="flex items-center gap-2 flex-grow max-w-[150px] justify-end text-right">
               <p className="text-sm text-muted-foreground whitespace-nowrap">{settings.equationSize || 100}px</p>
@@ -91,7 +100,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ settings, setSettings }) =>
                 value={[settings.equationSize || 100]}
                 onValueChange={([value]) => handleSettingChange('equationSize', value)}
                 max={200}
-                min={50}
+                min={1}
                 step={1}
                 className={cn("flex-grow", settings.equationSize === 0 ? 'opacity-50' : '')}
               />
