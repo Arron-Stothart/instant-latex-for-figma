@@ -12,7 +12,11 @@ loadSettings().then(loadedSettings => {
 });
 
 figma.ui.onmessage = async (msg) => {
-  if (msg.type === 'render-latex-request') {
+  if (msg.type === 'settings-updated') {
+    settings[msg.key] = msg.value;
+    await saveSetting(msg.key, msg.value);
+    figma.ui.postMessage({ type: 'settings-updated', settings });
+  } else if (msg.type === 'render-latex-request') {
     try {
       let latexFrame: FrameNode | null = null;
       const selection = figma.currentPage.selection;
@@ -89,9 +93,7 @@ figma.ui.onmessage = async (msg) => {
         message: error instanceof Error ? error.message : 'Unknown error rendering LaTeX',
       });
     }
-  } else if (msg.type === 'update-settings') {
-    await saveSetting(msg.key, msg.value);
-    settings = await loadSettings();
+  } else if (msg.type === 'request-settings') {
     figma.ui.postMessage({ type: 'settings-updated', settings });
   }
 };
@@ -104,12 +106,19 @@ figma.on('selectionchange', () => {
     if (textNode) {
       figma.ui.postMessage({
         type: 'latex-frame-selected',
-        latex: textNode.characters
+        latex: textNode.characters,
+        settings: settings 
+      });
+    } else {
+      figma.ui.postMessage({
+        type: 'latex-frame-deselected',
+        settings: settings
       });
     }
   } else {
     figma.ui.postMessage({
-      type: 'latex-frame-deselected'
+      type: 'latex-frame-deselected',
+      settings: settings
     });
   }
 });

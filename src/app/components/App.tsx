@@ -9,7 +9,7 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import avatarImage from '@/assets/avatar.svg';
-import { Settings, loadSettings } from '@/lib/figmaStorage';
+import { Settings } from '@/lib/figmaStorage';
 
 function App() {
   const [latexInput, setLatexInput] = React.useState<string | null>(null);
@@ -18,11 +18,16 @@ function App() {
     errorStart: number;
     errorEnd: number;
   } | null>(null);
-  const [settings, setSettings] = React.useState<Settings | null>(null);
+  const [stateSettings, setStateSettings] = React.useState<Settings | null>(null);
 
   React.useEffect(() => {
     window.onmessage = (event) => {
-      const { type, message, latex } = event.data.pluginMessage;
+      const { type, message, latex, settings } = event.data.pluginMessage;
+      if (type === 'settings-updated' || type === 'latex-frame-selected' || type === 'latex-frame-deselected') {
+        if (settings) {
+          setStateSettings(settings);
+        }
+      }
       if (type === 'render-latex-complete') {
         console.log(`Figma Says: ${message}`);
         setLatexError(null);
@@ -33,7 +38,8 @@ function App() {
           errorStart: 0,
           errorEnd: latexInput?.length || 0
         });
-      } else if (type === 'latex-frame-selected') {
+      }
+      if (type === 'latex-frame-selected') {
         setLatexInput(latex);
       } else if (type === 'latex-frame-deselected') {
         setLatexInput('');
@@ -41,20 +47,8 @@ function App() {
       }
     };
 
-    loadSettings().then(setSettings);
-
-    const handleSettingsUpdate = (event: MessageEvent) => {
-      if (event.data.pluginMessage && event.data.pluginMessage.type === 'settings-updated') {
-        setSettings(event.data.pluginMessage.settings);
-      }
-    };
-
-    window.addEventListener('message', handleSettingsUpdate);
-
-    return () => {
-      window.removeEventListener('message', handleSettingsUpdate);
-    };
-  }, [latexInput]);
+    parent.postMessage({ pluginMessage: { type: 'request-settings' } }, '*');
+  }, []);
 
   const handleLatexChange = async (newLatex: string) => {
     setLatexInput(newLatex);
@@ -65,7 +59,7 @@ function App() {
     } else {
       setLatexError(null);
       try {
-        const svgString = await renderLatex(newLatex);
+        const svgString = await renderLatex(newLatex, stateSettings);
         parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString, latex: newLatex } }, '*');
       } catch (renderError) {
         console.error('Error rendering LaTeX:', renderError);
@@ -101,7 +95,7 @@ function App() {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-100">
-              <SettingsMenu settings={settings} setSettings={setSettings} />
+              <SettingsMenu settings={stateSettings} setSettings={setStateSettings} />
             </PopoverContent>
           </Popover>
         </div>

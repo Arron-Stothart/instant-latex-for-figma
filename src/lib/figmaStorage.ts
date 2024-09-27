@@ -6,7 +6,7 @@ export interface Settings {
 }
 
 export const defaultSettings: Settings = {
-  fontFamily: 'TeX',
+  fontFamily: 'mathjax-tex',
   openAIKey: '',
   anthropicKey: '',
   equationSize: 0,

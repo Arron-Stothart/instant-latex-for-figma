@@ -1,4 +1,5 @@
 import katex from 'katex';
+import { Settings } from './figmaStorage'; // TODO: Move this to shared types library
 
 declare global {
   interface Window {
@@ -12,7 +13,7 @@ const ensureMathJaxLoaded = (): Promise<void> => {
       resolve();
     } else {
       const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js';
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0-alpha.1/es5/tex-svg.js';
       script.async = true;
       script.onload = () => {
         window.MathJax.startup.promise.then(resolve);
@@ -23,9 +24,9 @@ const ensureMathJaxLoaded = (): Promise<void> => {
   });
 };
 
-export const renderLatex = async (latex: string): Promise<string> => {
+export const renderLatex = async (latex: string, settings: Settings): Promise<string> => {
   await ensureMathJaxLoaded();
-  
+
   return new Promise((resolve, reject) => {
     if (!window.MathJax) {
       reject(new Error('MathJax not loaded'));
@@ -38,6 +39,33 @@ export const renderLatex = async (latex: string): Promise<string> => {
       document.body.appendChild(container);
 
       container.innerHTML = `\\[${latex}\\]`;
+
+      window.MathJax.config = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        svg: {
+          fontCache: 'global',
+          scale: 1,
+          minScale: .5,
+          mtextInheritFont: false,
+          merrorInheritFont: true,
+          mathmlSpacing: false,
+          skipAttributes: {},
+          exFactor: .5,
+          displayAlign: 'center',
+          displayIndent: '0',
+          internalSpeechTitles: true,
+        },
+        output: {
+          font: `https://cdn.jsdelivr.net/npm/${settings.fontFamily}-font/es5/output/fonts/${settings.fontFamily}`,
+          displayOverflow: 'linebreak',
+          linebreaks: {
+            width: '100%',
+            lineleading: 0.5,
+          }
+        }
+      };
 
       window.MathJax.typesetPromise([container]).then(() => {
         const mathJaxOutput = container.querySelector('.MathJax');

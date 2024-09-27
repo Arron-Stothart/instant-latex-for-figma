@@ -18,7 +18,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ settings, setSettings }) =>
     try {
       await saveSetting(key, value);
       setSettings(prev => prev ? { ...prev, [key]: value } : null);
-      parent.postMessage({ pluginMessage: { type: 'update-settings', key, value } }, '*');
+      parent.postMessage({ pluginMessage: { type: 'settings-updated', key, value } }, '*');
     } catch (error) {
       console.error(`Error saving setting ${key}:`, error);
     }
@@ -38,13 +38,17 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ settings, setSettings }) =>
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="TeX">MathJax TeX (default)</SelectItem>
-              <SelectItem value="STIX-Web">STIX General</SelectItem>
-              <SelectItem value="Asana-Math">Asana Math</SelectItem>
-              <SelectItem value="Neo-Euler">Neo Euler</SelectItem>
-              <SelectItem value="Gyre-Pagella">Gyre Pagella</SelectItem>
-              <SelectItem value="Gyre-Termes">Gyre Termes</SelectItem>
-              <SelectItem value="Latin-Modern">Latin Modern</SelectItem>
+              <SelectItem value="mathjax-tex">MathJax TeX (Default)</SelectItem>
+              <SelectItem value="mathjax-modern">MathJax Modern</SelectItem>
+              <SelectItem value="mathjax-stix2">STIX2</SelectItem>
+              <SelectItem value="mathjax-asana">Asana Math</SelectItem>
+              <SelectItem value="mathjax-euler">Neo Euler</SelectItem>
+              <SelectItem value="mathjax-pagella">Gyre Pagella</SelectItem>
+              <SelectItem value="mathjax-termes">Gyre Termes</SelectItem>
+              <SelectItem value="mathjax-bonum">Gyre Bonum</SelectItem>
+              <SelectItem value="mathjax-dejavu">Gyre DejaVu</SelectItem>
+              <SelectItem value="mathjax-schola">Gyre Schola</SelectItem>
+              <SelectItem value="mathjax-fira">Fira Math</SelectItem>
             </SelectContent>
           </Select>
         </div>
