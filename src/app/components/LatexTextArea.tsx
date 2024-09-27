@@ -1,5 +1,7 @@
 import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { CheckIcon, ClipboardIcon } from 'lucide-react';
 
 interface LatexTextAreaProps {
   value: string | null;
@@ -14,6 +16,7 @@ export default function LatexTextArea({
 }: LatexTextAreaProps) {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const highlightRef = React.useRef<HTMLDivElement>(null);
+  const [hasCopied, setHasCopied] = React.useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(event.target.value);
@@ -26,6 +29,13 @@ export default function LatexTextArea({
       {value.slice(error.errorEnd)}
     </>
   ) : null;
+
+  const handleCopyToClipboard = React.useCallback(() => {
+    if (value) {
+      setHasCopied(true);
+      setTimeout(() => setHasCopied(false), 2000);
+    }
+  }, [value]);
 
   React.useEffect(() => {
     const adjustHeight = () => {
@@ -58,25 +68,36 @@ export default function LatexTextArea({
           {highlightedText}
         </div>
       )}
-      <Textarea
-        ref={textareaRef}
-        value={value}
-        onChange={handleChange}
-        placeholder="Type your LaTeX here."
-        className="bg-transparent relative overflow-hidden"
-        spellCheck={false}
-        style={{
-          fontFamily: 'monospace',
-          fontSize: '1rem',
-          lineHeight: '1.5',
-          boxSizing: 'border-box',
-          border: '1px solid #ccc',
-          padding: '0.5rem',
-          width: '100%',
-          resize: 'none',
-          overflow: 'hidden',
-        }}
-      />
+      <div className="relative group">
+        <Textarea
+          ref={textareaRef}
+          value={value}
+          onChange={handleChange}
+          placeholder="Type your LaTeX here."
+          className="bg-transparent relative overflow-hidden"
+          spellCheck={false}
+          style={{
+            fontFamily: 'monospace',
+            fontSize: '1rem',
+            lineHeight: '1.5',
+            boxSizing: 'border-box',
+            border: '1px solid #ccc',
+            padding: '0.5rem',
+            width: '100%',
+            resize: 'none',
+            overflow: 'hidden',
+          }}
+        />
+        <Button
+          size="icon"
+          variant="ghost"
+          className="absolute top-2 right-2 h-6 w-6 text-transparent group-hover:text-slate-500 hover:bg-slate-100 hover:text-slate-700 [&_svg]:h-4 [&_svg]:w-4"
+          onClick={handleCopyToClipboard}
+        >
+          <span className="sr-only">Copy</span>
+          {hasCopied ? <CheckIcon /> : <ClipboardIcon />}
+        </Button>
+      </div>
       {error && (
         <p className="text-red-500 mt-1">{error.message}</p>
       )}
