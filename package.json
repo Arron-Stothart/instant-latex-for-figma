@@ -22,6 +22,7 @@
     "better-react-mathjax": "^2.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^11.9.0",
     "katex": "^0.16.11",
     "lucide-react": "^0.446.0",
     "react": "^18.2.0",
