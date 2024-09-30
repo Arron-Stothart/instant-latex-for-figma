@@ -1,8 +1,6 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Settings, saveSetting } from '@/lib/figmaStorage';
@@ -37,7 +35,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ settings, setSettings }) =>
             <SelectTrigger id="font-selector" className="col-span-2">
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="max-h-[200px] overflow-y-auto">
               <SelectItem value="mathjax-tex">MathJax TeX (Default)</SelectItem>
               <SelectItem value="mathjax-modern">MathJax Modern</SelectItem>
               <SelectItem value="mathjax-stix2">STIX2</SelectItem>
@@ -54,41 +52,12 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ settings, setSettings }) =>
         </div>
 
         <div className="grid grid-cols-3 items-center gap-4">
-          <Label htmlFor="openai-key">OpenAI API Key</Label>
-          <Input
-            id="openai-key"
-            type="password"
-            value={settings.openAIKey}
-            onChange={(e) => handleSettingChange('openAIKey', e.target.value)}
-            placeholder="Enter your OpenAI API key"
-            className="col-span-2"
-          />
-        </div>
-
-        <div className="grid grid-cols-3 items-center gap-4">
-          <Label htmlFor="anthropic-key">Anthropic API Key</Label>
-          <Input
-            id="anthropic-key"
-            type="password"
-            value={settings.anthropicKey}
-            onChange={(e) => handleSettingChange('anthropicKey', e.target.value)}
-            placeholder="Enter your Anthropic API key"
-            className="col-span-2"
-          />
-        </div>
-      
-        <Separator className="my-2" />
-
-        <div className="grid grid-cols-3 items-center gap-4">
           <Label htmlFor="equation-size">Equation Size</Label>
           <div className="col-span-2 flex items-center gap-2">
             <Button 
               variant="secondary" 
               size="sm" 
               onClick={() => handleSettingChange('equationSize', 0)}
-              className={cn(
-                settings.equationSize === 0 && "ring-2 ring-slate-900 ring-offset-2"
-              )}
             >
               Default
             </Button>

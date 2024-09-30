@@ -1,7 +1,6 @@
 import React from 'react';
 import { Menu } from 'lucide-react';
 import SettingsMenu from './SettingsMenu';
-import IntroductionCard from './IntroductionCard';
 import LatexTextArea from './LatexTextArea';
 import { renderLatex, validateLatexWithKaTeX } from '@/lib/latexRendering';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
@@ -53,12 +52,12 @@ function App() {
   const handleLatexChange = async (newLatex: string) => {
     setLatexInput(newLatex);
     const validationError = validateLatexWithKaTeX(newLatex);
-    
-    if (validationError) {
-      setLatexError(validationError);
-    } else {
-      setLatexError(null);
-      try {
+        
+        if (validationError) {
+          setLatexError(validationError);
+        } else {
+          setLatexError(null);
+          try {
         const svgString = await renderLatex(newLatex, stateSettings);
         parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString, latex: newLatex } }, '*');
       } catch (renderError) {
@@ -67,9 +66,9 @@ function App() {
           message: renderError instanceof Error ? renderError.message : 'Unknown error rendering LaTeX',
           errorStart: 0,
           errorEnd: newLatex.length,
-        });
-      }
-    }
+            });
+          }
+        }
   };
 
   return (
@@ -100,8 +99,6 @@ function App() {
           </Popover>
         </div>
       </div>
-
-      <IntroductionCard />
 
       <LatexTextArea
         value={latexInput}

@@ -68,7 +68,7 @@ export default function LatexTextArea({
           {highlightedText}
         </div>
       )}
-      <div className="relative group">
+      <div className="relative">
         <Textarea
           ref={textareaRef}
           value={value}
@@ -91,7 +91,8 @@ export default function LatexTextArea({
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-2 right-2 h-6 w-6 text-transparent group-hover:text-slate-500 hover:bg-slate-100 hover:text-slate-700 [&_svg]:h-4 [&_svg]:w-4"
+          disabled={!value}
+          className="absolute top-2 right-2 h-6 w-6 text-slate-500 hover:bg-slate-100 hover:text-slate-700 [&_svg]:h-4 [&_svg]:w-4"
           onClick={handleCopyToClipboard}
         >
           <span className="sr-only">Copy</span>
