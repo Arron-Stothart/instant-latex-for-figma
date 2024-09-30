@@ -2,6 +2,7 @@ import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, ClipboardIcon } from 'lucide-react';
+import topHundredCommands from '@/data/top_hundred_commands';
 
 interface LatexTextAreaProps {
   value: string | null;
@@ -17,9 +18,41 @@ export default function LatexTextArea({
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const highlightRef = React.useRef<HTMLDivElement>(null);
   const [hasCopied, setHasCopied] = React.useState(false);
+  const [suggestion, setSuggestion] = React.useState<string | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(event.target.value);
+    const newValue = event.target.value;
+    onChange(newValue);
+    updateSuggestion(newValue);
+  };
+
+  const updateSuggestion = (text: string) => {
+    const lastWord = text.split(/\s/).pop() || '';
+    if (lastWord.length >= 2) {
+      const matchingCommand = topHundredCommands.find(cmd => cmd.caption.startsWith(lastWord));
+      setSuggestion(matchingCommand ? matchingCommand.caption : null);
+    } else {
+      setSuggestion(null);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Tab' && suggestion) {
+      event.preventDefault();
+      const textarea = event.currentTarget;
+      const cursorPosition = textarea.selectionStart;
+      const textBeforeCursor = textarea.value.slice(0, cursorPosition);
+      const lastWord = textBeforeCursor.split(/\s/).pop() || '';
+      
+      const newValue = textBeforeCursor.slice(0, -lastWord.length) + suggestion + textarea.value.slice(cursorPosition);
+      onChange(newValue);
+      
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = cursorPosition - lastWord.length + suggestion.length;
+      }, 0);
+
+      setSuggestion(null);
+    }
   };
 
   const highlightedText = value && error ? (
@@ -73,6 +106,7 @@ export default function LatexTextArea({
           ref={textareaRef}
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder="Type your LaTeX here."
           className="bg-transparent relative overflow-hidden"
           spellCheck={false}
@@ -101,6 +135,11 @@ export default function LatexTextArea({
       </div>
       {error && (
         <p className="text-red-500 mt-1">{error.message}</p>
+      )}
+      {suggestion && !!value && (
+        <div className="text-sm text-gray-500 mt-1">
+          Suggestion: {suggestion} (press Tab to complete)
+        </div>
       )}
     </div>
   );
