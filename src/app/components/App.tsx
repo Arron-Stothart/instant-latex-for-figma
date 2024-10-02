@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu } from 'lucide-react';
 import SettingsMenu from './SettingsMenu';
-import LatexTextArea from './LatexTextArea';
+import LatexInputArea from './LatexInputArea';
 import { renderLatex, validateLatexWithKaTeX } from '@/lib/latexRendering';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
@@ -71,6 +71,10 @@ function App() {
         }
   };
 
+  const handleImageUpload = (file: File) => {
+    console.log('Uploading file:', file.name);
+  };
+
   return (
     <div className="p-4 space-y-4">
       <div className="flex flex-row space-x-2 items-center justify-between">
@@ -100,9 +104,10 @@ function App() {
         </div>
       </div>
 
-      <LatexTextArea
+      <LatexInputArea
         value={latexInput}
         onChange={handleLatexChange}
+        onImageUpload={handleImageUpload}
         error={latexError}
       />
       
