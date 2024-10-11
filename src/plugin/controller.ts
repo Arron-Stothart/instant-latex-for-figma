@@ -43,16 +43,16 @@ figma.ui.onmessage = async (msg) => {
       
       const zoom = figma.viewport.zoom;
       let scaleFactor = 1 / zoom * 5;
-      let historyId: string;
+      let historyId = generateId();
       
       if (latexFrame) {
         const existingScaleFactor = latexFrame.getPluginData('scaleFactor');
         if (existingScaleFactor) {
           scaleFactor = parseFloat(existingScaleFactor);
         }
-        const historyNode = latexFrame.findChild(node => node.type === 'TEXT' && node.name === 'History ID') as TextNode;
-        if (historyNode) {
-          historyId = historyNode.characters;
+        const existingHistoryID = latexFrame.getPluginData('historyID');
+        if (existingHistoryID) {
+          historyId = existingHistoryID;
         }
         latexFrame.children.forEach(child => child.remove());
       } else {
@@ -61,6 +61,9 @@ figma.ui.onmessage = async (msg) => {
       }
       
       latexFrame.setPluginData('scaleFactor', scaleFactor.toString());
+      latexFrame.setPluginData('historyID', historyId);
+
+      console.log(historyId);
       
       svgNode.rescale(scaleFactor);
       
@@ -86,14 +89,6 @@ figma.ui.onmessage = async (msg) => {
       textNode.name = 'Original LaTeX';
       latexFrame.appendChild(textNode);
 
-      const historyNode = figma.createText();
-      await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-      historyNode.fontName = { family: "Inter", style: "Regular" };
-      historyNode.characters = String(historyId || generateId());
-      historyNode.visible = false;
-      historyNode.name = 'History ID';
-      latexFrame.appendChild(historyNode);
-
       figma.currentPage.selection = [latexFrame];
       
       figma.ui.postMessage({
@@ -101,9 +96,8 @@ figma.ui.onmessage = async (msg) => {
         message: 'LaTeX equation rendered successfully',
       });
 
-      // Generate and store history ID
       const updatedHistory = await addToHistory({
-        id: historyId || generateId(),
+        id: historyId,
         latex: msg.latex,
         svg: msg.svg,
         settings: {

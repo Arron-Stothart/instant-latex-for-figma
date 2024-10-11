@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { HistoryItem } from '@/lib/history';
 
@@ -21,13 +21,19 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ onClose, history, onSelectIte
       {history.map((item) => (
         <div
           key={item.id}
-          className="p-2 hover:bg-gray-100 cursor-pointer rounded"
-          onClick={() => onSelectItem(item)}
+          className="p-2 hover:bg-gray-100 cursor-pointer rounded flex justify-between items-center"
         >
-          <p className="font-mono text-sm truncate">{item.latex}</p>
-          <p className="text-xs text-gray-500">
-            {new Date(item.timestamp).toLocaleString()}
-          </p>
+          <div className="flex-grow" onClick={() => {}}>
+            <p className="font-mono text-sm truncate">{item.latex}</p>
+            <p className="text-xs text-gray-500">
+              {new Date(item.timestamp).toLocaleString()}
+            </p>
+          </div>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="icon" onClick={() => onSelectItem(item)}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       ))}
     </div>
