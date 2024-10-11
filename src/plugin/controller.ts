@@ -1,4 +1,6 @@
+import { generateId } from '@/lib/utils';
 import { loadSettings, saveSetting, Settings } from '../lib/figmaStorage';
+import { addToHistory, getHistory } from '../lib/history';
 
 figma.showUI(__html__);
 
@@ -41,11 +43,16 @@ figma.ui.onmessage = async (msg) => {
       
       const zoom = figma.viewport.zoom;
       let scaleFactor = 1 / zoom * 5;
+      let historyId: string;
       
       if (latexFrame) {
         const existingScaleFactor = latexFrame.getPluginData('scaleFactor');
         if (existingScaleFactor) {
           scaleFactor = parseFloat(existingScaleFactor);
+        }
+        const historyNode = latexFrame.findChild(node => node.type === 'TEXT' && node.name === 'History ID') as TextNode;
+        if (historyNode) {
+          historyId = historyNode.characters;
         }
         latexFrame.children.forEach(child => child.remove());
       } else {
@@ -78,7 +85,15 @@ figma.ui.onmessage = async (msg) => {
       textNode.visible = false;
       textNode.name = 'Original LaTeX';
       latexFrame.appendChild(textNode);
-      
+
+      const historyNode = figma.createText();
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+      historyNode.fontName = { family: "Inter", style: "Regular" };
+      historyNode.characters = String(historyId || generateId());
+      historyNode.visible = false;
+      historyNode.name = 'History ID';
+      latexFrame.appendChild(historyNode);
+
       figma.currentPage.selection = [latexFrame];
       
       figma.ui.postMessage({
@@ -86,6 +101,18 @@ figma.ui.onmessage = async (msg) => {
         message: 'LaTeX equation rendered successfully',
       });
 
+      // Generate and store history ID
+      const updatedHistory = await addToHistory({
+        id: historyId || generateId(),
+        latex: msg.latex,
+        svg: msg.svg,
+        settings: {
+          fontFamily: settings.fontFamily,
+          equationSize: settings.equationSize,
+        },
+      });
+
+      figma.ui.postMessage({ type: 'history-updated', history: updatedHistory });
     } catch (error) {
       console.error('Error rendering LaTeX:', error);
       figma.ui.postMessage({
@@ -95,6 +122,9 @@ figma.ui.onmessage = async (msg) => {
     }
   } else if (msg.type === 'request-settings') {
     figma.ui.postMessage({ type: 'settings-updated', settings });
+  } else if (msg.type === 'request-history') {
+    const history = await getHistory();
+    figma.ui.postMessage({ type: 'history-updated', history });
   }
 };
 

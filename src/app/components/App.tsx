@@ -1,14 +1,15 @@
 import React from 'react';
-import { Menu } from 'lucide-react';
+import { History, Menu } from 'lucide-react';
 import SettingsMenu from './SettingsMenu';
 import LatexInputArea from './LatexInputArea';
 import { renderLatex, validateLatexWithKaTeX } from '@/lib/latexRendering';
-import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import avatarImage from '@/assets/avatar.svg';
 import { Settings } from '@/lib/figmaStorage';
+import HistoryMenu from './HistoryMenu';
+import { HistoryItem } from '@/lib/history';
 
 function App() {
   const [latexInput, setLatexInput] = React.useState<string | null>(null);
@@ -18,13 +19,20 @@ function App() {
     errorEnd: number;
   } | null>(null);
   const [stateSettings, setStateSettings] = React.useState<Settings | null>(null);
+  const [showHistory, setShowHistory] = React.useState(false);
+  const [history, setHistory] = React.useState<HistoryItem[]>([]);
 
   React.useEffect(() => {
     window.onmessage = (event) => {
-      const { type, message, latex, settings } = event.data.pluginMessage;
+      const { type, message, latex, settings, history } = event.data.pluginMessage;
       if (type === 'settings-updated' || type === 'latex-frame-selected' || type === 'latex-frame-deselected') {
         if (settings) {
           setStateSettings(settings);
+        }
+      }
+      if (type === 'history-updated') {
+        if (history) {
+          setHistory(history);
         }
       }
       if (type === 'render-latex-complete') {
@@ -47,6 +55,7 @@ function App() {
     };
 
     parent.postMessage({ pluginMessage: { type: 'request-settings' } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'request-history' } }, '*');
   }, []);
 
   const handleLatexChange = async (newLatex: string) => {
@@ -60,6 +69,7 @@ function App() {
           try {
         const svgString = await renderLatex(newLatex, stateSettings);
         parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString, latex: newLatex } }, '*');
+        parent.postMessage({ pluginMessage: { type: 'request-history' } }, '*');
       } catch (renderError) {
         console.error('Error rendering LaTeX:', renderError);
         setLatexError({
@@ -76,41 +86,69 @@ function App() {
   };
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex flex-row space-x-2 items-center justify-between">
-        <div className="flex flex-row space-x-2 items-center">
-          <Avatar className="w-4 h-4 rounded-none">
-            <AvatarImage src={avatarImage} alt="Avatar" />
-          </Avatar>
-          <p className="text-lg font-medium">Instant LaTeX</p>
-        </div>
+    <div className="relative h-screen overflow-hidden">
+      <div
+        className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
+          showHistory ? '-translate-x-full' : 'translate-x-0'
+        }`}
+      >
+        <div className="p-4 space-y-4">
+          <div className="flex flex-row space-x-2 items-center justify-between">
+            <div className="flex flex-row space-x-2 items-center">
+              <Avatar className="w-4 h-4 rounded-none">
+                <AvatarImage src={avatarImage} alt="Avatar" />
+              </Avatar>
+              <p className="text-lg font-medium">Instant LaTeX</p>
+            </div>
 
-        <div className="flex flex-row space-x-2 items-center justify-end">
-          <Button variant="default" size="icon" className="bg-[#1E1E1E] hover:bg-[#2E2E2E]" asChild>
-            <a href="https://github.com/Arron-Stothart/real-time-latex" target="_blank" rel="noopener noreferrer">
-              <GitHubLogoIcon className="h-4 w-4" />
-            </a>
-          </Button>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-4 w-4" />
+            <div className="flex flex-row space-x-2 items-center justify-end">
+              <Button 
+                variant="default" 
+                size="icon" 
+                className="bg-[#1E1E1E] hover:bg-[#2E2E2E]"
+                onClick={() => setShowHistory(true)}
+              >
+                <History className="h-4 w-4" />
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-100">
-              <SettingsMenu settings={stateSettings} setSettings={setStateSettings} />
-            </PopoverContent>
-          </Popover>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Menu className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-100">
+                  <div className="scale-80 origin-top-left transform">
+                    <SettingsMenu settings={stateSettings} setSettings={setStateSettings} />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
+          <LatexInputArea
+            value={latexInput}
+            onChange={handleLatexChange}
+            onImageUpload={handleImageUpload}
+            error={latexError}
+          />
         </div>
       </div>
 
-      <LatexInputArea
-        value={latexInput}
-        onChange={handleLatexChange}
-        onImageUpload={handleImageUpload}
-        error={latexError}
-      />
-      
+      <div
+        className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
+          showHistory ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <HistoryMenu 
+          onClose={() => setShowHistory(false)} 
+          history={history}
+          onSelectItem={(item) => {
+            setLatexInput(item.latex);
+            setShowHistory(false);
+            handleLatexChange(item.latex);
+          }}
+        />
+      </div>
     </div>
   );
 }
