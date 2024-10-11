@@ -2,7 +2,6 @@ import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, ClipboardIcon, UploadCloud } from 'lucide-react';
-import topHundredCommands from '@/data/top_hundred_commands';
 
 interface LatexTextAreaProps {
   value: string | null;
@@ -66,13 +65,14 @@ export default function LatexInputArea({
   };
 
   const updateSuggestion = (text: string) => {
-    const lastWord = text.split(/\s/).pop() || '';
-    if (lastWord.length >= 2) {
-      const matchingCommand = topHundredCommands.find(cmd => cmd.caption.startsWith(lastWord));
-      setSuggestion(matchingCommand ? matchingCommand.caption : null);
-    } else {
-      setSuggestion(null);
-    }
+    text
+    // const lastWord = text.split(/\s/).pop() || '';
+    // if (lastWord.length >= 2) {
+    //   const matchingCommand = topHundredCommands.find(cmd => cmd.caption.startsWith(lastWord));
+    //   setSuggestion(matchingCommand ? matchingCommand.caption : null);
+    // } else {
+    //   setSuggestion(null);
+    // }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -141,7 +141,7 @@ export default function LatexInputArea({
             style={{
               padding: '0.5rem',
               fontFamily: 'monospace',
-              fontSize: '1rem',
+              fontSize: '0.8rem',
               lineHeight: '1.5',
               border: '1px solid transparent',
             }}
@@ -161,7 +161,7 @@ export default function LatexInputArea({
             spellCheck={false}
             style={{
               fontFamily: 'monospace',
-              fontSize: '1rem',
+              fontSize: '0.8rem',
               lineHeight: '1.5',
               boxSizing: 'border-box',
               border: '1px solid #ccc',
@@ -195,7 +195,9 @@ export default function LatexInputArea({
         )}
       </div>
       {error && (
-        <p className="text-red-500 mt-1">{error.message}</p>
+        <p className="text-red-500 mt-1">
+          {error.message.replace(/^KaTeX parse error:\s*/i, '')}
+        </p>
       )}
       {suggestion && !!value && (
         <div className="text-sm text-gray-500 mt-1">

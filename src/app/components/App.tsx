@@ -86,7 +86,7 @@ function App() {
         </div>
 
         <div className="flex flex-row space-x-2 items-center justify-end">
-          <Button variant="default" size="icon" asChild>
+          <Button variant="default" size="icon" className="bg-[#1E1E1E] hover:bg-[#2E2E2E]" asChild>
             <a href="https://github.com/Arron-Stothart/real-time-latex" target="_blank" rel="noopener noreferrer">
               <GitHubLogoIcon className="h-4 w-4" />
             </a>

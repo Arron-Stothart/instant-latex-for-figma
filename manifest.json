@@ -1,5 +1,5 @@
 {
-  "name": "Real-time LaTeX",
+  "name": "Instant LaTeX",
   "id": "1420200508652132281",
   "api": "1.0.0",
   "main": "dist/code.js",
