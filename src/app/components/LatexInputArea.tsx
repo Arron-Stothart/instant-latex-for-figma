@@ -134,21 +134,20 @@ export default function LatexInputArea({
           handleDrop(Array.from(e.dataTransfer.files));
         }}
       >
-        {error && (
-          <div
-            ref={highlightRef}
-            className="absolute top-0 left-0 right-0 pointer-events-none whitespace-pre-wrap break-words overflow-hidden box-border"
-            style={{
-              padding: '0.5rem',
-              fontFamily: 'monospace',
-              fontSize: '0.8rem',
-              lineHeight: '1.5',
-              border: '1px solid transparent',
-            }}
-          >
-            {highlightedText}
-          </div>
-        )}
+        <div
+          ref={highlightRef}
+          className="absolute top-0 left-0 right-0 pointer-events-none whitespace-pre-wrap break-words overflow-hidden box-border opacity-0 transition-opacity duration-150 ease-in-out"
+          style={{
+            padding: '0.5rem',
+            fontFamily: 'monospace',
+            fontSize: '0.8rem',
+            lineHeight: '1.5',
+            border: '1px solid transparent',
+            opacity: error ? 1 : 0, // Add this line
+          }}
+        >
+          {highlightedText}
+        </div>
         <div className="relative">
           <Textarea
             ref={textareaRef}
@@ -156,7 +155,7 @@ export default function LatexInputArea({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
-            placeholder="Type your LaTeX here or drag and drop an image."
+            placeholder="Type your LaTeX here or drag and drop a screenshot."
             className="bg-transparent relative overflow-hidden min-h-[100px]"
             spellCheck={false}
             style={{
@@ -194,11 +193,9 @@ export default function LatexInputArea({
           </div>
         )}
       </div>
-      {error && (
-        <p className="text-red-500 mt-1">
-          {error.message.replace(/^KaTeX parse error:\s*/i, '')}
-        </p>
-      )}
+      <p className="text-red-400 mt-1 text-sm opacity-0 transition-opacity duration-150 ease-in-out" style={{ opacity: error ? 1 : 0 }}>
+        {error?.message.replace(/^KaTeX parse error:\s*/i, '') || ""}
+      </p>
       {suggestion && !!value && (
         <div className="text-sm text-gray-500 mt-1">
           Suggestion: {suggestion} (press Tab to complete)

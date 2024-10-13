@@ -10,6 +10,7 @@ import avatarImage from '@/assets/avatar.svg';
 import { Settings } from '@/lib/figmaStorage';
 import HistoryMenu from './HistoryMenu';
 import { HistoryItem } from '@/lib/history';
+import { debounce } from 'lodash'; // Add this import at the top of the file
 
 function App() {
   const [latexInput, setLatexInput] = React.useState<string | null>(null);
@@ -58,27 +59,34 @@ function App() {
     parent.postMessage({ pluginMessage: { type: 'request-history' } }, '*');
   }, []);
 
+  const setLatexErrorDebounced = React.useCallback(
+    debounce((error: typeof latexError) => {
+      setLatexError(error);
+    }, 300),
+    []
+  );
+
   const handleLatexChange = async (newLatex: string) => {
     setLatexInput(newLatex);
     const validationError = validateLatexWithKaTeX(newLatex);
-        
-        if (validationError) {
-          setLatexError(validationError);
-        } else {
-          setLatexError(null);
-          try {
+    
+    if (validationError) {
+      setLatexErrorDebounced(validationError);
+    } else {
+      setLatexErrorDebounced(null);
+      try {
         const svgString = await renderLatex(newLatex, stateSettings);
         parent.postMessage({ pluginMessage: { type: 'render-latex-request', svg: svgString, latex: newLatex } }, '*');
         parent.postMessage({ pluginMessage: { type: 'request-history' } }, '*');
       } catch (renderError) {
         console.error('Error rendering LaTeX:', renderError);
-        setLatexError({
+        setLatexErrorDebounced({
           message: renderError instanceof Error ? renderError.message : 'Unknown error rendering LaTeX',
           errorStart: 0,
           errorEnd: newLatex.length,
-            });
-          }
-        }
+        });
+      }
+    }
   };
 
   const handleImageUpload = (file: File) => {

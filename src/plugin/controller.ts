@@ -65,7 +65,7 @@ figma.ui.onmessage = async (msg) => {
 
       console.log(historyId);
       
-      svgNode.rescale(scaleFactor);
+      svgNode.rescale(scaleFactor * 0.6);
       
       const finalWidth = svgNode.width;
       const finalHeight = svgNode.height;
