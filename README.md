@@ -14,7 +14,7 @@
 - Continue-where-you-left-off equation modification
 - Debounced reports for parsing errors with in-line highlighting
 
-## Tech Stack
+## Implementation Details
 
 - **figma-plugin-react-template**: [https://github.com/nirsky/figma-plugin-react-template](https://github.com/nirsky/figma-plugin-react-template)
 - **MathJax v4.0.0-alpha.1**: [https://github.com/mathjax/MathJax-src/releases/tag/4.0.0-alpha.1](https://github.com/mathjax/MathJax-src/releases/tag/4.0.0-alpha.1)
@@ -27,8 +27,7 @@
 
 ## Roadmap
 
-- Image/screenshot to LaTeX using mathPix API
-- Tab-to-complete with relevant recommendations
-- Tab for accepting a completion and Ctrl-Space for opening autocomplete
-- AsciiMath and MathML support
-- Alternate font family support
+- [ ] Image/screenshot inputs using MathPix API
+- [ ] Tab-to-complete with relevant recommendations
+- [ ] AsciiMath and MathML support
+- [ ] Support for alternate fonts to mathjax-modern (mathjax-asana, mathjax-bonum, mathjax-dejavu, mathjax-pagella, mathjax-schola, mathjax-termes, mathjax-stix2, mathjax-fira, mathjax-euler, mathjax-tex)
