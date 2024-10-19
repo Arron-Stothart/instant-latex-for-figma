@@ -1,40 +1,34 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+# Instant LaTeX - Figma Plugin for Typesetting Math into Designs Instantly
 
-  https://www.figma.com/plugin-docs/plugin-quickstart-guide/
+<div align="center" width="100%">
+  <video src="https://github.com/user-attachments/assets/e8417ab4-1e52-46ab-9a02-0655f5afe91b" width="100%" controls />
+</div>
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
+## Features
 
-  https://nodejs.org/en/download/
+- Real-time conversion of LaTeX to SVG
+- Instant response to changes with live parsing error feedback
+- Clean and functional UI using shadcn/ui components
+- Equation history tracking allowing quick re-insertion
+- Continue-where-you-left-off equation modification
+- Debounced reports for parsing errors with in-line highlighting
 
-Next, install TypeScript using the command:
+## Tech Stack
 
-  npm install -g typescript
+- **figma-plugin-react-template**: [https://github.com/nirsky/figma-plugin-react-template](https://github.com/nirsky/figma-plugin-react-template)
+- **MathJax v4.0.0-alpha.1**: [https://github.com/mathjax/MathJax-src/releases/tag/4.0.0-alpha.1](https://github.com/mathjax/MathJax-src/releases/tag/4.0.0-alpha.1)
+  
+- TypeScript
+- React.js
+- Tailwind CSS
+- shadcn/ui components
 
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
 
-  npm install --save-dev @figma/plugin-typings
+## Roadmap
 
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
-
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
-
-For more information, visit https://www.typescriptlang.org/
-
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
-
-We recommend writing TypeScript code using Visual Studio code:
-
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "npm: watch". You will have to do this again every time
-    you reopen Visual Studio Code.
-
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+- Image/screenshot to LaTeX using mathPix API
+- Tab-to-complete with relevant recommendations
+- Tab for accepting a completion and Ctrl-Space for opening autocomplete
+- AsciiMath and MathML support
+- Alternate font family support
