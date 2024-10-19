@@ -18,11 +18,7 @@
 
 - **figma-plugin-react-template**: [https://github.com/nirsky/figma-plugin-react-template](https://github.com/nirsky/figma-plugin-react-template)
 - **MathJax v4.0.0-alpha.1**: [https://github.com/mathjax/MathJax-src/releases/tag/4.0.0-alpha.1](https://github.com/mathjax/MathJax-src/releases/tag/4.0.0-alpha.1)
-  
-- TypeScript
-- React.js
-- Tailwind CSS
-- shadcn/ui components
+- TypeScript, React.js, Tailwind CSS, shadcn/ui
 
 
 ## Roadmap
